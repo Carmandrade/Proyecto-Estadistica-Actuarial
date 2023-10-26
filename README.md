@@ -9,6 +9,8 @@ Manejo de base.ipynb
   
 Tabla MPI.xlsx  
 
+Maqueta  
+
 **Autores:**  
 Federico Alfaro  
 Carlos Andrade  
