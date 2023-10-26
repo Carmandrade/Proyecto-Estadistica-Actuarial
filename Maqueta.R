@@ -1,3 +1,4 @@
+library(rstudioapi)
 library(dplyr)
 library(ggplot2)
 library(nortest)
@@ -6,7 +7,12 @@ library(readxl)
 library(gridExtra)
 
 
-indicadoresPobreza <- read_excel("C:/Users/Maricruz Vásquez/Documents/UCR/CA0303 Estadistica/Proyecto/3 Indicadores.xlsx")
+# Para encontrar donde esta guardado este archivo
+script_directory <- dirname(rstudioapi::getSourceEditorContext()$path)
+# Se toma esta dirección como el nuevo working directory
+setwd(script_directory)
+# Se carga el archivo, es importante que tanto "Maqueta.R" como "3 Dimensiones.xlsx" estén guardados en el mismo lugar
+indicadoresPobreza <- read_excel("3 Dimensiones.xlsx")
 
 #Separamos los datos por variable
 datosSalud <- indicadoresPobreza$Salud
