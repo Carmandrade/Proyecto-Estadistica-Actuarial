@@ -9,17 +9,15 @@ output: html_document
 
 ```{r cars}
 library(tidyverse)
-library("readxl")
 library(ggplot2)
 
 
 ruta_excel2 <- "C:/Users/alber/OneDrive/Escritorio/II Semestre 2023/Estadística/Proyecto Estadística/Datos/Tablas/Indicadores.xlsx"
 
-# Leer el archivo de Excel
+# Lee el archivo de Excel
 df <- read_excel(ruta_excel2)
-#create pairs plot
 
-
+#Se calcula el promedio de los indicadores y se convierten en una nueva tabla.
 mean_df <- colMeans(df, na.rm = TRUE) %>% 
   as.data.frame() %>% 
   rownames_to_column(var = "Columna") %>% 
@@ -31,18 +29,20 @@ mean_df <- colMeans(df, na.rm = TRUE) %>%
 
 ```{r pressure, echo=FALSE}
 library(ggplot2)
-library(stringr)
+library(stringr) #Se usa para usar la funcion "str_warp" que ajusta el texto en el eje y.
+
 grafico1 <- ggplot(mean_df, aes(x = reorder(Columna, Promedio), y = Promedio)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   geom_text(aes(label = round(Promedio, 1)), hjust = 0.1) +
   coord_flip() +
   theme_minimal() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        axis.text.y = element_text(angle = 0, hjust = 1, size = 10)) + # Aquí se ajusta el tamaño del texto
+        axis.text.y = element_text(angle = 0, hjust = 1, size = 10)) + # Ajuste del tamaño del texto
   labs(x = "Deprivaciones", y = "Porcentaje", title = "") +
   scale_y_continuous(labels = function(x) str_wrap(x, width = 11), breaks = seq(ceiling(min(mean_df$Promedio)), ceiling(max(mean_df$Promedio)), by = 4))
 
 print(grafico1)
+# Guarda los gráficos combinados como una imagen.
 ggsave("mis_grafico1.png", grafico1, bg="white")
 ```
 
@@ -50,13 +50,11 @@ ggsave("mis_grafico1.png", grafico1, bg="white")
 ```{r}
 ruta_excel4 <- "C:/Users/alber/OneDrive/Escritorio/II Semestre 2023/Estadística/Proyecto Estadística/Datos/Tabla Limpia.xlsx"
 tabla_limpia <- read_excel(ruta_excel4)
-# Carga la biblioteca
 library(ggplot2)
 library(stringr)
 
-# Define una función para insertar saltos de línea cada dos palabras
 
-# Define un vector de traducciones
+# Se crea un vector con las traducciones
 traducciones <- c("Europe and Central Asia" = "Europa y Asia Central",
                   "Arab States" = "Estados Árabes",
                   "Latin America and the Caribbean" = "América Latina y el Caribe",
@@ -65,43 +63,36 @@ traducciones <- c("Europe and Central Asia" = "Europa y Asia Central",
                   "Sub-Saharan Africa" = "África Subsahariana"
 )
 
-# Reemplaza los nombres de las regiones en inglés por los nombres en español
+# Reemplaza los nombres de las regiones en inglés por los nombres en español en la tabla
 tabla_limpia$Región <- traducciones[tabla_limpia$Región]
 
-
-# Aplica la función a los nombres de las regiones
-#tabla_limpia$Región <- sapply(tabla_limpia$Región, insert_newlines)
-# Crea el gráfico de cajas
+# Creación del gráfico de cajas
 cajas <- ggplot(tabla_limpia, aes(x = `Región`, y = `IPM (0 a 1)`)) +
-  geom_boxplot(fill = "steelblue") + # Cambia el color de las cajas a "steel blue"
+  geom_boxplot(fill = "steelblue") + 
   labs(title = "",
        x = "Región",
        y = "IPM") +
   scale_x_discrete(labels = function(x) str_wrap(x, width = 15)) +
   scale_y_continuous(breaks = seq(0, 1, by = 0.05)) + # Ajusta las etiquetas del eje y
-  theme_bw() + # Cambia el fondo a blanco
-  theme(plot.background = element_rect(fill = "white")) # Ajusta las etiquetas del eje x
+  theme_bw() + #Cambia el fondo a blanco
+  theme(plot.background = element_rect(fill = "white")) 
 
 print(cajas)
+# Guarda los gráficos combinados como una imagen.
 ggsave("mi_grafica4.png", cajas, bg="white")
-# Muestra los nombres de las columnas
+
 
 ```
 
 
-##Gráfico 3
+##Gráfico 3 
 
 ```{r}
-if (!require(gridExtra)) {
-  install.packages("gridExtra")
-}
-library(gridExtra)
-library(GGally)
-ruta_excel3 <- "C:/Users/alber/OneDrive/Escritorio/II Semestre 2023/Estadística/Proyecto Estadística/Datos/Tablas/3 Indicadores.xlsx"
+library(gridExtra) #Esta librería se usará para poder unir varios gráficos en uno
+ruta_excel3 <- "C:/Users/alber/OneDrive/Escritorio/II Semestre 2023/Estadística/Proyecto Estadística/Datos/Tablas/3 Dimensiones.xlsx"
 
-# Leer el archivo de Excel
+
 df <- read_excel(ruta_excel3)
-df
 p1 <- ggplot(df, aes(x=Salud, y=Educación)) +
   geom_point(color = "steelblue") +
   labs(x="Salud", y="Educación", 
@@ -120,11 +111,11 @@ p3 <- ggplot(df, aes(x=Educación, y=`Estándares de Vida`)) +
        title="") +
   theme_minimal()
 
-# Muestra los gráficos
+# Se combinan los gráficos:
 grafico3<-grid.arrange(p1, p2, p3, nrow = 1)
 
 
-# Guarda los gráficos combinados como una imagen
+# Guarda los gráficos combinados como una imagen.
 ggsave("mis_grafico3.png", grafico3)
 
 ```
