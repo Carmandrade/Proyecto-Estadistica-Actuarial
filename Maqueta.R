@@ -1,17 +1,19 @@
-library(rstudioapi)
 library(dplyr)
 library(ggplot2)
 library(nortest)
 library(psych)
 library(readxl)
 library(gridExtra)
+library(rstudioapi)
 
 
+getwd()
 # Para encontrar donde esta guardado este archivo
 script_directory <- dirname(rstudioapi::getSourceEditorContext()$path)
+script_directory
 # Se toma esta dirección como el nuevo working directory
 setwd(script_directory)
-# Se carga el archivo, es importante que tanto "Maqueta.R" como "3 Dimensiones.xlsx" estén guardados en el mismo lugar
+# Se carga el archivo, es importante que tanto Maqueta.R como 3 Dimensiones.xlsx estén guardados en el mismo lugar
 indicadoresPobreza <- read_excel("3 Dimensiones.xlsx")
 
 #Separamos los datos por variable
@@ -19,51 +21,9 @@ datosSalud <- indicadoresPobreza$Salud
 datosEstandarVida <- indicadoresPobreza$`Estándares de Vida`
 datosEducacion <- indicadoresPobreza$Educación
 
-#########################################################################################
+################################################################################
 
-#Graficas de dispersion
 
-plot_Salud_Educacion <- ggplot(data = indicadoresPobreza, aes(x = datosSalud, y = datosEducacion)) +
-  geom_point(colour="#3182bd", alpha = 0.8) +
-  labs(x = "Salud", y = "Educación")
-options(repr.plot.width = 6, repr.plot.height = 4)
-
-plot_Educacion_EstandarVida <- ggplot(data = indicadoresPobreza, aes(x = datosEducacion, y = datosEstandarVida)) +
-  geom_point(colour="#319b1d",alpha = 0.8) +
-  labs(x = "Educación", y = "Estádar Vida")
-options(repr.plot.width = 6, repr.plot.height = 4)
-
-plot_EstandarVida_Educacion <- ggplot(data = indicadoresPobreza, aes(x = datosEstandarVida, y = datosSalud)) +
-  geom_point(colour="#623397",alpha = 0.8) +
-  labs(x = "Estándar de Vida", y = "Salud")
-options(repr.plot.width = 6, repr.plot.height = 4)
-
-dispersion <- grid.arrange(plot_Salud_Educacion, plot_Educacion_EstandarVida, plot_EstandarVida_Educacion, ncol = 3)
-ggsave(filename = "Dispersion3Dimensiones.pdf", dispersion)
-
-# Histogramas
-plot_salud <- ggplot(indicadoresPobreza, aes( x = datosSalud)) +
-  geom_histogram(bins = 20, fill = "#3182bd") +
-  labs(title = "Distribución Salud", x = "Salud", y = "Valor") +
-  theme_minimal() +
-  theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
-
-plot_educacion <- ggplot(indicadoresPobreza, aes(x = datosEducacion)) +
-  geom_histogram(bins = 20, fill = "#319b1d") +
-  labs(title = "Distribución Educación", x = "Educación", y = "Valor") +
-  theme_minimal() +
-  theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
-
-plot_estandar_vida <- ggplot(indicadoresPobreza, aes(x = datosEstandarVida)) +
-  geom_histogram(bins = 20, fill = "#623397") +
-  labs(title = "Distribución Estándar Vida", x = "Estándar Vida", y = "Valor") +
-  theme_minimal() +
-  theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
-
-histogramas<- grid.arrange(plot_salud, plot_educacion, plot_estandar_vida, ncol = 3)
-ggsave(filename = "Histogramas3Indicadores.pdf", histogramas, h=3, w=5*1.8)
-
-#########################################################################################
 # Pruebas Shapiro-Wilk
 
 shapiro_test_salud <- shapiro.test(datosSalud)
@@ -96,18 +56,24 @@ cat("Variable Salud: Estadistico =", kolmogorov_test_salud$statistic,", p-value 
 "Variable Educación: Estadistico =", kolmogorov_test_educacion$statistic,", p-value = ", kolmogorov_test_educacion$p.value, "\n",
 "Variable EstandarVida: Estadistico =", kolmogorov_test_estandar_vida$statistic,", p-value = ", kolmogorov_test_estandar_vida$p.value, "\n")
 
+#Todas las pruebas indican que los daos no siguen una distribución normal. 
+#Por lo que se procede a calcular de la correlación de Spearman, el cual se adapta mejor para datos no normales.
 
-#########################################################################################
-
+##################################################################################
 # Correlacion de Spearman
 cor_Salud_Educacion <- corr.test(datosSalud, datosEducacion, method = "spearman")
 cor_EstandarVida_Educacion <- corr.test(datosEstandarVida, datosEducacion, method = "spearman")
 cor_Salud_EstandarVida <- corr.test(datosSalud, datosEstandarVida, method = "spearman")
 
+# Resultados
+cat("Correlación Salud - Educación: ", cor_Salud_Educacion$r, "\n",
+    "Correlación Estándar de Vida - Educación: " ,cor_EstandarVida_Educacion$r, "\n",
+    "Correlación Salud - Estándar de Vida: ",cor_Salud_EstandarVida$r, "\n")
 
-#########################################################################################
+#Estos valores cercanos a 1 indican que todos los indicadores están fuertemente correlaciones.
 
-#Bootstrap
+################################################################################
+#Método Bootstrap para simular la distribución de los coeficientes de correlación
 
 set.seed(123)
 num_simulaciones <- 1000
@@ -166,6 +132,5 @@ for (i in 1:num_simulaciones) {
 # Histograma de los coeficientes de correlacion simulados
 hist(coefs_EstandarVida_Salud, breaks = 30, col = "#623397", main = "Dist. Coef. Correlación Método Bootstrap", xlab = "Estándar de Vida - Salud", ylab = "Valor")
 abline(h = 0, col = "black", lty = 1)
-
 
 
