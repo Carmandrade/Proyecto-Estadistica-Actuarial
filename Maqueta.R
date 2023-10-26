@@ -6,7 +6,7 @@ library(readxl)
 library(ggplot2)
 
 
-indicadoresPobreza <- read_excel("C:/Users/Maricruz Vásquez/Documents/UCR/CA0303 Estadistica/Proyecto/3 Indicadores.xlsx")
+indicadoresPobreza <- read_excel("3 Indicadores.xlsx")
 
 #Separamos los datos por variable
 datosSalud <- indicadoresPobreza$Salud
