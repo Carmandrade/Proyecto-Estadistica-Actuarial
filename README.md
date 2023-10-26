@@ -5,7 +5,7 @@ Calculo de correlacion.ipynb
   
 Codigo gráficas.Rmd  
   
-<%= render(Primer::Beta::Octicon.new(:"database")) %> Manejo de base.ipynb  
+Manejo de base.ipynb  
   
 Tabla MPI.xlsx  
 
