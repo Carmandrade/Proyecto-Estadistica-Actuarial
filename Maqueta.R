@@ -3,7 +3,6 @@ library(ggplot2)
 library(nortest)
 library(psych)
 library(readxl)
-library(ggplot2)
 
 
 indicadoresPobreza <- read_excel("3 Dimensiones.xlsx")
@@ -13,7 +12,7 @@ datosSalud <- indicadoresPobreza$Salud
 datosEstandarVida <- indicadoresPobreza$`Estandares de Vida`
 datosEducacion <- indicadoresPobreza$Educacion
 
-# Scatter plot: Salud-Educacion
+# Grafica Dispersion: Salud-Educacion
 plot_Salud_Educacion <- ggplot(data = indicadoresPobreza, aes(x = datosSalud, y = datosEducacion)) +
   geom_point(colour="#3182bd", alpha = 0.8) +
   labs(x = "Salud", y = "Educacion")
@@ -21,7 +20,7 @@ options(repr.plot.width = 6, repr.plot.height = 4)
 
 print(plot_Salud_Educacion)
 
-# Scatter plot: Educacion - Estandar de Vida
+# Grafica Dispersion: Educacion - Estandar de Vida
 plot_Educacion_EstandarVida <- ggplot(data = indicadoresPobreza, aes(x = datosEduacion, y = datosEstandarVida)) +
   geom_point(colour="#319b1d",alpha = 0.8) +
   labs(x = "Educacion", y = "Estadar Vida")
@@ -29,7 +28,7 @@ options(repr.plot.width = 6, repr.plot.height = 4)
 
 print(plot_EstandarVida_Educacion)
 
-# Scatter plot: Estandares de Vida-Salud
+# Grafica Dispersion: Estandares de Vida-Salud
 plot_EstandarVida_Educacion <- ggplot(data = indicadoresPobreza, aes(x = datosEstandarVida, y = datosSalud)) +
   geom_point(colour="#623397",alpha = 0.8) +
   labs(x = "Estandar de Vida", y = "Salud")
@@ -50,39 +49,55 @@ abline(h = -0.01, col = "black", lty = 1)
 hist(datosEducacion, breaks = 20, col = "#319b1d", main = "Distribucion", xlab = "Educacion", ylab = "Valor")
 abline(h = -0.01, col = "black", lty = 1)
 
-# Plot 3: Distribucion Estandar Vida
+# Plot 3: Distribucion EstandarVida
 hist(datosEstandarVida, breaks = 20, col = "#623397", main = "Distribucion", xlab = "Estandar Vida", ylab = "Valor")
 abline(h = -0.01, col = "black", lty = 1)
 
-# Pruebas Shapiro-Wilk
+
+#--------------------------------------------------------------------------------------------------------------------------
+# Pruebas de Normalidad: Shapiro-Wilk
 
 shapiro_test_salud <- shapiro.test(datosSalud)
 shapiro_test_educacion <- shapiro.test(datosEducacion)
 shapiro_test_vida <- shapiro.test(datosEstandarVida)
+#Resultados
 cat("Variable Salud: p-value =", shapiro_test_salud$p.value, "\n",
-"Variable Educacion: p-value =", shapiro_test_educacion$p.value, "\n",
-"Variable Estandar de Vida: p-value =", shapiro_test_vida$p.value, "\n")
+"Variable Educación: p-value =", shapiro_test_educacion$p.value, "\n",
+"Variable Estándar de Vida: p-value =", shapiro_test_vida$p.value, "\n")
 
 
+# Pruebas de Normalidad D'Angostino
 
-# Pruebas de Normalidad
-kolmogorov_test_salud <- lillie.test(datosSalud)
-cat("Variable Salud: Estadistico =", kolmogorov_test_salud$statistic, ", p-value =", kolmogorov_test_salud$p.value, "\n")
+dangostino_test_salud <- lillie.test(datosSalud)
+dangostino_test_educacion <- lillie.test(datosEducacion)
+dangostino_test_vida <- lillie.test(datosEstandarVida)
+#Resultados
+cat("Variable Salud: Estadístico =", dangostino_test_salud$statistic, ", p-value =", dangostino_test_salud$p.value, "\n",
+"Variable Educación: Estadístico =", dangostino_test_educacion$statistic, ", p-value =", dangostino_test_educacion$p.value, "\n",
+"Variable Estándar de Vida: Estadístico =", dangostino_test_vida$statistic, ", p-value =", dangostino_test_vida$p.value, "\n")
 
-kolmogorov_test_educacion <- lillie.test(datosEducacion)
-cat("Variable Educacion: Estadistico =", kolmogorov_test_educacion$statistic, ", p-value =", kolmogorov_test_educacion$p.value, "\n")
 
-kolmogorov_test_vida <- lillie.test(datosEstandarVida)
-cat("Variable Estandar de Vida: Estadistico =", kolmogorov_test_vida$statistic, ", p-value =", kolmogorov_test_vida$p.value, "\n")
+# Pruebas Kolmorogov
+
+kolmogorov_test_salud <- ks.test(datosSalud, "pnorm")
+kolmogorov_test_educacion <- ks.test(datosEducacion, "pnorm")
+kolmogorov_test_estandar_vida <- ks.test(datosEstandarVida, "pnorm")
+#Resultados
+cat("Variable Salud: Estadistico =", kolmogorov_test_salud$statistic,", p-value = ", kolmogorov_test_salud$p.value, "\n",
+"Variable Educación: Estadistico =", kolmogorov_test_educacion$statistic,", p-value = ", kolmogorov_test_educacion$p.value, "\n",
+"Variable EstandarVida: Estadistico =", kolmogorov_test_estandar_vida$statistic,", p-value = ", kolmogorov_test_estandar_vida$p.value, "\n")
+
+#--------------------------------------------------------------------------------------------------------------------------
 
 # Correlacion de Spearman
 cor_Salud_Educacion <- corr.test(datosSalud, datosEducacion, method = "spearman")
 cor_EstandarVida_Educacion <- corr.test(datosEstandarVida, datosEducacion, method = "spearman")
 cor_Salud_EstandarVida <- corr.test(datosSalud, datosEstandarVida, method = "spearman")
-
 # Resultados
 print(cor_EstandarVida_Educacion)
 
+
+#--------------------------------------------------------------------------------------------------------------------------
 
 #Bootstrap
 
