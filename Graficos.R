@@ -46,7 +46,7 @@ ggsave("Grafico1.pdf", grafico1, bg="white")
 #Grafico 2
 tabla_limpia <- read_excel("Tabla Limpia.xlsx")
 
-# Se crea un vector con las traducciones de los nombres d ecada region
+# Se crea un vector con las traducciones de los nombres de cada region
 traducciones <- c("Europe and Central Asia" = "Europa y Asia Central",
                   "Arab States" = "Estados Árabes",
                   "Latin America and the Caribbean" = "América Latina y el Caribe",
