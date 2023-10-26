@@ -19,53 +19,51 @@ datosSalud <- indicadoresPobreza$Salud
 datosEstandarVida <- indicadoresPobreza$`Estándares de Vida`
 datosEducacion <- indicadoresPobreza$Educación
 
+#########################################################################################
 
+#Graficas de dispersion
 
-# Grafica Dispersion: Salud-Educacion
 plot_Salud_Educacion <- ggplot(data = indicadoresPobreza, aes(x = datosSalud, y = datosEducacion)) +
   geom_point(colour="#3182bd", alpha = 0.8) +
   labs(x = "Salud", y = "Educación")
 options(repr.plot.width = 6, repr.plot.height = 4)
 
-print(plot_Salud_Educacion)
-
-# Grafica Dispersion: Educacion - Estandar de Vida
 plot_Educacion_EstandarVida <- ggplot(data = indicadoresPobreza, aes(x = datosEducacion, y = datosEstandarVida)) +
   geom_point(colour="#319b1d",alpha = 0.8) +
   labs(x = "Educación", y = "Estádar Vida")
 options(repr.plot.width = 6, repr.plot.height = 4)
 
-print(plot_EstandarVida_Educacion)
-
-# Grafica Dispersion: Estandares de Vida-Salud
 plot_EstandarVida_Educacion <- ggplot(data = indicadoresPobreza, aes(x = datosEstandarVida, y = datosSalud)) +
   geom_point(colour="#623397",alpha = 0.8) +
   labs(x = "Estándar de Vida", y = "Salud")
 options(repr.plot.width = 6, repr.plot.height = 4)
 
-print(plot_EstandarVida_Educacion)
-
-
 dispersion <- grid.arrange(plot_Salud_Educacion, plot_Educacion_EstandarVida, plot_EstandarVida_Educacion, ncol = 3)
-
 ggsave(filename = "Dispersion3Dimensiones.pdf", dispersion)
 
-# Visualización del plot 1x3
-layout(matrix(1:3, nrow = 1))
-par(mar = c(5, 4, 4, 2))
+# Histogramas
+plot_salud <- ggplot(indicadoresPobreza, aes( x = datosSalud)) +
+  geom_histogram(bins = 20, fill = "#3182bd") +
+  labs(title = "Distribución Salud", x = "Salud", y = "Valor") +
+  theme_minimal() +
+  theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
 
-# Plot 1: Distribución Salud
-hist(datosSalud, breaks = 20, col = "#3182bd", main = "Distribución", xlab = "Salud", ylab = "Valor")
-abline(h = -0.01, col = "black", lty = 1)
+plot_educacion <- ggplot(indicadoresPobreza, aes(x = datosEducacion)) +
+  geom_histogram(bins = 20, fill = "#319b1d") +
+  labs(title = "Distribución Educación", x = "Educación", y = "Valor") +
+  theme_minimal() +
+  theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
 
-# Plot 2: Distribución Educación
-hist(datosEducacion, breaks = 20, col = "#319b1d", main = "Distribución", xlab = "Educación", ylab = "Valor")
-abline(h = -0.01, col = "black", lty = 1)
+plot_estandar_vida <- ggplot(indicadoresPobreza, aes(x = datosEstandarVida)) +
+  geom_histogram(bins = 20, fill = "#623397") +
+  labs(title = "Distribución Estándar Vida", x = "Estándar Vida", y = "Valor") +
+  theme_minimal() +
+  theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
 
-# Plot 3: Distribución Estándar Vida
-hist(datosEstandarVida, breaks = 20, col = "#623397", main = "Distribución", xlab = "Estándar Vida", ylab = "Valor")
-abline(h = -0.01, col = "black", lty = 1)
+histogramas<- grid.arrange(plot_salud, plot_educacion, plot_estandar_vida, ncol = 3)
+ggsave(filename = "Histogramas3Indicadores.pdf", histogramas, h=3, w=5*1.8)
 
+#########################################################################################
 # Pruebas Shapiro-Wilk
 
 shapiro_test_salud <- shapiro.test(datosSalud)
@@ -75,7 +73,6 @@ shapiro_test_vida <- shapiro.test(datosEstandarVida)
 cat("Variable Salud: p-value =", shapiro_test_salud$p.value, "\n",
 "Variable Educación: p-value =", shapiro_test_educacion$p.value, "\n",
 "Variable Estándar de Vida: p-value =", shapiro_test_vida$p.value, "\n")
-
 
 
 # Pruebas de Normalidad D'Angostino
@@ -100,14 +97,15 @@ cat("Variable Salud: Estadistico =", kolmogorov_test_salud$statistic,", p-value 
 "Variable EstandarVida: Estadistico =", kolmogorov_test_estandar_vida$statistic,", p-value = ", kolmogorov_test_estandar_vida$p.value, "\n")
 
 
+#########################################################################################
+
 # Correlacion de Spearman
 cor_Salud_Educacion <- corr.test(datosSalud, datosEducacion, method = "spearman")
 cor_EstandarVida_Educacion <- corr.test(datosEstandarVida, datosEducacion, method = "spearman")
 cor_Salud_EstandarVida <- corr.test(datosSalud, datosEstandarVida, method = "spearman")
 
-# Resultados
-print(cor_EstandarVida_Educacion)
 
+#########################################################################################
 
 #Bootstrap
 
