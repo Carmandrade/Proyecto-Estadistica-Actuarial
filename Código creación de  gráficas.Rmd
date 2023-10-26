@@ -12,7 +12,7 @@ library(tidyverse)
 library(ggplot2)
 
 
-ruta_excel2 <- "C:/Users/alber/OneDrive/Escritorio/II Semestre 2023/Estadística/Proyecto Estadística/Datos/Tablas/Indicadores.xlsx"
+ruta_excel2 <- "Indicadores.xlsx"
 
 # Lee el archivo de Excel
 df <- read_excel(ruta_excel2)
