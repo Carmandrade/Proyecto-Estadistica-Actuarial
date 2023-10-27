@@ -5,6 +5,7 @@ library(rstudioapi)
 library(dplyr)
 library(tibble)
 library(stringr)
+library(grid)
 library(gridExtra)
 
 getwd()
@@ -12,19 +13,18 @@ getwd()
 script_directory <- dirname(rstudioapi::getSourceEditorContext()$path)
 # Se toma esta dirección como el nuevo working directory
 setwd(script_directory)
-# Se carga el archivo, es importante que tanto Graficos.R como los archivos .xlsx estén guardados en el mismo lugar
-indicadoresPobreza <- read_excel("Indicadores.xlsx")
+# Para la carga de archivos es importante que tanto Graficos.R como los archivos .xlsx estén guardados en el mismo lugar
 
+#-------------------------------------------------------------------------------
+#Grafico 1: Promedio global por de pobreza por subindicador
+
+indicadoresPobreza <- read_excel("Indicadores.xlsx")
 #Se calcula el promedio de los indicadores y se convierten en una nueva tabla.
 mean_df <- colMeans(indicadoresPobreza, na.rm = TRUE) %>% 
   as.data.frame() %>% 
   rownames_to_column(var = "Columna") %>% 
   rename(Promedio = ".")
-
-#-------------------------------------------------------------------------------
-#Grafico 1
-
-
+# Clasificacion segun indicador principal
 mean_df$Indicador <- c("Salud", "Salud", "Educación", "Educación", "Estándar de Vida","Estándar de Vida","Estándar de Vida","Estándar de Vida","Estándar de Vida","Estándar de Vida")
 
 grafico1 <- ggplot(mean_df, aes(x = reorder(Columna, Promedio), y = Promedio, fill = Indicador)) +
@@ -41,9 +41,9 @@ grafico1 <- ggplot(mean_df, aes(x = reorder(Columna, Promedio), y = Promedio, fi
 
 print(grafico1)
 
-ggsave("Grafico1.pdf", grafico1, bg="white")
+#ggsave("Grafico1.pdf", grafico1, bg="white")
 #-------------------------------------------------------------------------------
-#Grafico 2
+#Grafico 2: Grafico de cajas valores del IPM por region 
 tabla_limpia <- read_excel("Tabla Limpia.xlsx")
 
 # Se crea un vector con las traducciones de los nombres de cada region
@@ -70,11 +70,11 @@ grafico2 <- ggplot(tabla_limpia, aes(x = `Región`, y = `IPM (0 a 1)`)) +
   theme(plot.background = element_rect(fill = "white")) 
 
 print(grafico2)
-# Guarda los gráficos combinados como una imagen.
-ggsave("Grafico2.pdf", grafico2, bg="white", w=5*1.6, h=5)
+
+#ggsave("Grafico2.pdf", grafico2, bg="white", w=5*1.6, h=5)
 
 #-------------------------------------------------------------------------------
-#Grafico 3
+#Grafico 3: Dispersion dos a dos de los 3 indicadores
 
 df <- read_excel("3 Dimensiones.xlsx")
 p1 <- ggplot(df, aes(x=Salud, y=Educación)) +
@@ -98,10 +98,10 @@ p3 <- ggplot(df, aes( x=`Estándares de Vida`, y=Salud)) +
 grafico3<-grid.arrange(p1, p2, p3, nrow = 1)
 
 
-ggsave("Grafico3.pdf", grafico3, h=5, w=5*1.8)
+#ggsave("Grafico3.pdf", grafico3, h=5, w=5*1.8)
 
 #-------------------------------------------------------------------------------
-#Grafico 4
+#Grafico 4: Distribuciones de los 3 indicadores principales
 plot_salud <- ggplot(df, aes( x = Salud)) +
   geom_histogram(bins = 20, fill = "#efa7a7") +
   labs(title = "Distribución Salud", x = "Salud", y = "Valor Porcentual") +
@@ -122,10 +122,35 @@ plot_estandar_vida <- ggplot(df, aes(x = `Estándares de Vida`)) +
   theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
 
 
-histogramas<- grid.arrange(plot_salud, plot_educacion, plot_estandar_vida, ncol = 3)
+grafico4<- grid.arrange(plot_salud, plot_educacion, plot_estandar_vida, ncol = 3)
 
-ggsave(filename = "Grafico4.pdf", histogramas, h=2.5, w=5*1.8)
+#ggsave(filename = "Grafico4.pdf", grafico4, h=2.5, w=5*1.8)
+                   
+#-------------------------------------------------------------------------------
+#Grafico 5: Distribuciones Coef. Correlacion Metodo Bootstrap
 
+coefs <- read_excel("Distribucion_Correlacion_Bootstrap.xlsx")
+
+plot1 <- ggplot(as.data.frame(coefs), aes( x = Salud_Educacion)) +
+  geom_histogram(bins = 30, fill = "#efa7a7") +
+  labs(x = " Salud - Educación", y = "Frecuencia") + 
+  theme_minimal()+ theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
+
+plot2 <- ggplot(as.data.frame(coefs), aes( x = Educacion_EstandarVida)) +
+  geom_histogram(bins = 30, fill = "#C2D7A7") +
+  labs(x = " Educación - Estándar Vida", y = "Frecuencia") + 
+  theme_minimal() +theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
+
+plot3 <- ggplot(as.data.frame(coefs), aes( x = EstandarVida_Salud)) +
+  geom_histogram(bins = 30, fill = "#9cadce") +
+  labs( x = "Estándar Vida - Salud", y = "Frecuencia") + 
+  theme_minimal()+ theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
+
+grafico5<- grid.arrange(plot1, plot2, plot3, ncol = 3, 
+                           top = textGrob("           Distribución del coeficiente de correlación",
+                                          gp=gpar(fontsize=12,font=2)))
+
+#ggsave(filename = "Grafico5.pdf", histogramas, h=2.5, w=5*1.8)
 
 
 
