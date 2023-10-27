@@ -73,9 +73,9 @@ cat("Correlación Salud - Educación: ", cor_Salud_Educacion$r, "\n",
 #Estos valores cercanos a 1 indican que todos los indicadores están fuertemente correlaciones.
 
 ################################################################################
-#Método Bootstrap para simular la distribución de los coeficientes de correlación
+#Bootstrap
 
-set.seed(123)
+set.seed(1)
 num_simulaciones <- 1000
 
 #-------------------------------------------------------------------------------
@@ -83,19 +83,21 @@ num_simulaciones <- 1000
 
 # Vector para almacenar los coeficientes de correlacion simulados
 coefs_Salud_Educacion <- numeric(num_simulaciones)
-tamano_muestra <- length(datosSalud)
 
 # Simulaciones
 for (i in 1:num_simulaciones) {
-  muestra_salud <- sample(datosSalud, tamano_muestra, replace = FALSE)
-  coef_Salud_Educacion  <- cor(muestra_salud, datosEducacion, method = "spearman")
-  coefs_Salud_Educacion[i] <- coef_Salud_Educacion 
+  muestra_Salud <- sample(datosSalud, length(datosSalud), replace = FALSE)
+  muestra_Educacion <- sample(datosEducacion, length(datosEducacion), replace = FALSE)
+  
+  coefs_Salud_Educacion[i] <- cor(muestra_Salud, muestra_Educacion, method = "spearman")
 }
 
-# Histograma de los coeficientes de correlacion simulados
-hist(coefs_Salud_Educacion, breaks = 30, col = "#3182bd", main = "Dist. Coef. Correlación Método Bootstrap", xlab = "Salud - Educación", ylab = "Valor")
-abline(h = 0, col = "black", lty = 1)
 
+# Histograma de los coeficientes de correlacion simulados
+hist(coefs_Salud_Educacion, breaks = 30, col = "#efa7a7", main = "Dist. Coef. Correlación Método Bootstrap", 
+     xlab =  "Coeficiente de correlación Salud - Educación", ylab = "Frecuencia")
+abline(h = 0, col = "black", lty = 1)
+ 
 #-------------------------------------------------------------------------------
 # Educación - Estándar de Vida
 
@@ -106,31 +108,44 @@ tamano_muestra <- length(datosEducacion)
 # Simulaciones
 for (i in 1:num_simulaciones) {
   muestra_Educacion <- sample(datosEducacion, tamano_muestra, replace = FALSE)
-  coef_Educacion_EstandarVida  <- cor(muestra_Educacion, datosEstandarVida, method = "spearman")
-  coefs_Educacion_EstandarVida[i] <- coef_Educacion_EstandarVida
+  muestra_EstandarVida <- sample(datosEstandarVida, length(datosEstandarVida), replace = FALSE)
+   
+  coefs_Educacion_EstandarVida[i] <- cor(muestra_Educacion, muestra_EstandarVida, method = "spearman")
 }
 
 # Histograma de los coeficientes de correlacion simulados
-hist(coefs_Educacion_EstandarVida, breaks = 30, col = "#319b1d", main = "Dist. Coef. Correlación Método Bootstrap", xlab = "Educación - Estándar de Vida", ylab = "Valor")
+hist(coefs_Educacion_EstandarVida, breaks = 30, col = "#C2D7A7", main = "Dist. Coef. Correlación Método Bootstrap", 
+     xlab = "Coeficiente de correlación Educación - Estándar de Vida", ylab = "Frecuencia")
 abline(h = 0, col = "black", lty = 1)
 
 
 #-------------------------------------------------------------------------------
 #Estándar de Vida - Salud
+
 # Vector para almacenar los coeficientes de correlacion simulados
 coefs_EstandarVida_Salud <- numeric(num_simulaciones)
 
-tamano_muestra <- length(datosEstandarVida)
-
 # Simulaciones
 for (i in 1:num_simulaciones) {
-  muestra_EstandarVida <- sample(datosEstandarVida, tamano_muestra, replace = FALSE)
-  coef_EstandarVida_Salud  <- cor(muestra_EstandarVida, datosSalud, method = "spearman")
-  coefs_EstandarVida_Salud[i] <- coef_EstandarVida_Salud
+  muestra_EstandarVida <- sample(datosEstandarVida, length(datosEstandarVida), replace = FALSE)
+  muestra_Salud <- sample(datosSalud, length(datosSalud), replace = FALSE)
+  
+  coefs_EstandarVida_Salud[i] <- cor(muestra_EstandarVida, muestra_Salud, method = "spearman")
 }
 
 # Histograma de los coeficientes de correlacion simulados
-hist(coefs_EstandarVida_Salud, breaks = 30, col = "#623397", main = "Dist. Coef. Correlación Método Bootstrap", xlab = "Estándar de Vida - Salud", ylab = "Valor")
+hist(coefs_EstandarVida_Salud, breaks = 30, col = "#623397", main = "Dist. Coef. Correlación Método Bootstrap", 
+     xlab = "Coeficiente de correlación Estándar de Vida - Salud", ylab = "Frecuencia")
 abline(h = 0, col = "black", lty = 1)
+
+#Resultados
+coefs <- data.frame(Salud_Educacion = coefs_Salud_Educacion, 
+                    Educacion_EstandarVida = coefs_Educacion_EstandarVida,
+                    EstandarVida_Salud = coefs_EstandarVida_Salud)
+
+
+#write_xlsx(coefs, path = "Distribucion_Correlacion_Bootstrap.xlsx")
+#-------------------------------------------------------------------------------
+
 
 
