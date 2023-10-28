@@ -154,8 +154,31 @@ g3<- ggplot(coefs, aes(x = col3)) +
 grafico5<-grid.arrange(g1, g2, g3, ncol =3)
 
 #ggsave(filename = "Grafico5.pdf", histogramas, h=2.5, w=5*1.8)
+#-----------------------------------------------------------------------------
+# Grafico 6: Comparacion entre distribuciones simuladas
 
+grafico6 <- ggplot() +
+  geom_density(data = coefs, aes(x = col1, color = "Salud - Educación", fill = "Salud - Educación"), alpha = 0.6) +
+  geom_density(data = coefs, aes(x = col2, color = "Educación - Estándar de Vida", fill = "Educación - Estándar de Vida"), alpha = 0.5) +
+  geom_density(data = coefs, aes(x = col3, color = "Estándar de Vida - Salud", fill = "Estándar de Vida - Salud"), alpha = 0.6) +
+  labs(
+    x = "Coeficientes de correlación",
+    y = "Densidad") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(0.86, 0.98, by = 0.02), labels = seq(0.86, 0.98, by = 0.02)) +
+  scale_color_manual(
+    name = "Comparación",
+    values = c("Salud - Educación" = "#efa7a7", "Educación - Estándar de Vida" = "#C2D7A7", "Estándar de Vida - Salud" = "#9cadce"),
+    labels = c("Salud - Educación", "Educación - Estándar de Vida", "Estándar de Vida - Salud")
+  ) +
+  scale_fill_manual(
+    name = "Comparación",
+    values = c("Salud - Educación" = "#efa7a7", "Educación - Estándar de Vida" = "#C2D7A7", "Estándar de Vida - Salud" = "#9cadce"),
+    labels = c("Salud - Educación", "Educación - Estándar de Vida", "Estándar de Vida - Salud")
+  )
 
+grafico6
+#ggsave(filename = "Grafico6.pdf", grafico6, h=2.5, w=5*1.8)
 
 
 
