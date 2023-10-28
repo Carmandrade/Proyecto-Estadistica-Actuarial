@@ -20,7 +20,6 @@ indicadoresPobreza <- read_excel("3 Dimensiones.xlsx")
 datosSalud <- indicadoresPobreza$Salud
 datosEstandarVida <- indicadoresPobreza$`Estándares de Vida`
 datosEducacion <- indicadoresPobreza$Educación
-
 ################################################################################
 
 
@@ -71,6 +70,40 @@ cat("Correlación Salud - Educación: ", cor_Salud_Educacion$r, "\n",
     "Correlación Salud - Estándar de Vida: ",cor_Salud_EstandarVida$r, "\n")
 
 #Estos valores cercanos a 1 indican que todos los indicadores están fuertemente correlaciones.
+################################################################################
+
+#Promedios de los coeficientes de correlación
+promSalud <- (cor_Salud_Educacion$r + cor_Salud_EstandarVida$r)/2
+promEducacion <- (cor_EstandarVida_Educacion$r + cor_Salud_Educacion$r)/2
+promEstandarvida <- (cor_EstandarVida_Educacion$r + cor_Salud_EstandarVida$r)/2
+
+#Resultados
+cat("Promedio correlación Salud: ", promSalud, "\n",
+    "Promedio correlación Educación: " ,promEducacion, "\n",
+    "Promedio correlación Estándar de Vida: ",promEstandarvida, "\n")
+
+################################################################################
+#Intervalos de confianza con estabilización de la varianza
+
+'''
+Calcula el intercalo de confianza de una correlación.
+r:= Coeficiente de correlación.
+nivelSignificancia:= Nivel de significancia (alpha). Como decimales, no en porcentaje.
+cantidadMuestra:= Cantidad de datos en la muestra.
+'''
+calculaIntervaloConfianza <- function(r,nivelSignificancia,cantiadMuestra) {
+  return(data.frame(limInf=tanh(atanh(r)-qnorm(1-(nivelSignificancia)/2)/sqrt(cantiadMuestra)),
+                    limSup=tanh(atanh(r)+qnorm(1-(nivelSignificancia)/2)/sqrt(cantiadMuestra))))
+}
+
+alpha <- 0.05 
+n <- length(datosEducacion)
+intervalo_Salud_Educacion<- calculaIntervaloConfianza(cor_Salud_Educacion$r,alpha,n)
+intervalo_Salud_Educacion
+intervalo_EstandarVida_Educacion<- calculaIntervaloConfianza(cor_EstandarVida_Educacion$r,alpha,n)
+intervalo_EstandarVida_Educacion
+intervalo_Salud_EstandarVida<- calculaIntervaloConfianza(cor_Salud_EstandarVida$r,alpha,n)
+intervalo_Salud_EstandarVida
 
 ################################################################################
 #Bootstrap
