@@ -74,77 +74,66 @@ cat("Correlación Salud - Educación: ", cor_Salud_Educacion$r, "\n",
 
 ################################################################################
 #Bootstrap
+library("boot")
+set.seed(0)
 
-set.seed(1)
-num_simulaciones <- 1000
+datos_Salud_Educacion <- data.frame(datosSalud,datosEducacion)
+datos_Educacion_EstandarVida <- data.frame(datosEducacion, datosEstandarVida)
+datos_EstandarVida_Salud <- data.frame(datosEstandarVida, datosSalud)
 
+b_Salud_Educacion <- boot(datos_Salud_Educacion, R = 1000,
+           statistic = function(datos_Salud_Educacion, i) {
+             cor(datos_Salud_Educacion[i, "datosSalud"], 
+                 datos_Salud_Educacion[i, "datosEducacion"], method='spearman')
+           }
+)
+b_Salud_Educacion
+boot.ci(b_Salud_Educacion, type = c("norm", "basic", "perc", "bca")) 
+
+
+
+g1<- ggplot(as.data.frame(b_Salud_Educacion$t), aes(x = V1)) +
+  geom_density( fill = "#efa7a7") +
+    labs(x = "Correlación Salud - Educación",
+       y = "Densidad") + theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))+
+  theme_minimal() 
+         
+print(g1)
+         
+#------------------------------------------------------------------------------
+b_Educacion_EstandarVida <- boot(datos_Educacion_EstandarVida, R = 1000,
+                          statistic = function(datos_Educacion_EstandarVida, i) {
+                            cor(datos_Educacion_EstandarVida[i, "datosEducacion"], 
+                                datos_Educacion_EstandarVida[i, "datosEstandarVida"], method='spearman')
+                          }
+)
+b_Educacion_EstandarVida$
+boot.ci(b_Educacion_EstandarVida, type = c("norm", "basic", "perc", "bca")) 
+
+g2<- ggplot(as.data.frame(b_Educacion_EstandarVida$t), aes(x = V1)) +
+  geom_density( fill = "#C2D7A7") +
+  labs(x = "Correlación: Educación - Estándar de Vida",
+       y = "Densidad") + theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))+
+  theme_minimal() 
+
+print(g2)
 #-------------------------------------------------------------------------------
-# Salud - Educación
+b_EstandarVida_Salud <- boot(datos_EstandarVida_Salud, R = 1000,
+                          statistic = function(datos_EstandarVida_Salud, i) {
+                            cor(datos_EstandarVida_Salud[i, "datosEstandarVida"], 
+                                datos_EstandarVida_Salud[i, "datosSalud"], method='spearman')
+                          }
+)
+b_EstandarVida_Salud
+boot.ci(b_EstandarVida_Salud, type = c("norm", "basic", "perc", "bca")) 
+g3<- ggplot(as.data.frame(b_Educacion_EstandarVida$t), aes(x = V1)) +
+  geom_density( fill = "#9cadce") +
+  labs( x = "Correlación: Educación - Estándar de Vida",
+       y = "Densidad") + theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))+
+  theme_minimal() 
 
-# Vector para almacenar los coeficientes de correlacion simulados
-coefs_Salud_Educacion <- numeric(num_simulaciones)
+print(g3)
 
-# Simulaciones
-for (i in 1:num_simulaciones) {
-  muestra_Salud <- sample(datosSalud, length(datosSalud), replace = FALSE)
-  muestra_Educacion <- sample(datosEducacion, length(datosEducacion), replace = FALSE)
-  
-  coefs_Salud_Educacion[i] <- cor(muestra_Salud, muestra_Educacion, method = "spearman")
-}
-
-
-# Histograma de los coeficientes de correlacion simulados
-hist(coefs_Salud_Educacion, breaks = 30, col = "#efa7a7", main = "Dist. Coef. Correlación Método Bootstrap", 
-     xlab =  "Coeficiente de correlación Salud - Educación", ylab = "Frecuencia")
-abline(h = 0, col = "black", lty = 1)
- 
-#-------------------------------------------------------------------------------
-# Educación - Estándar de Vida
-
-# Vector para almacenar los coeficientes de correlacion simulados
-coefs_Educacion_EstandarVida <- numeric(num_simulaciones)
-tamano_muestra <- length(datosEducacion)
-
-# Simulaciones
-for (i in 1:num_simulaciones) {
-  muestra_Educacion <- sample(datosEducacion, tamano_muestra, replace = FALSE)
-  muestra_EstandarVida <- sample(datosEstandarVida, length(datosEstandarVida), replace = FALSE)
-   
-  coefs_Educacion_EstandarVida[i] <- cor(muestra_Educacion, muestra_EstandarVida, method = "spearman")
-}
-
-# Histograma de los coeficientes de correlacion simulados
-hist(coefs_Educacion_EstandarVida, breaks = 30, col = "#C2D7A7", main = "Dist. Coef. Correlación Método Bootstrap", 
-     xlab = "Coeficiente de correlación Educación - Estándar de Vida", ylab = "Frecuencia")
-abline(h = 0, col = "black", lty = 1)
-
-
-#-------------------------------------------------------------------------------
-#Estándar de Vida - Salud
-
-# Vector para almacenar los coeficientes de correlacion simulados
-coefs_EstandarVida_Salud <- numeric(num_simulaciones)
-
-# Simulaciones
-for (i in 1:num_simulaciones) {
-  muestra_EstandarVida <- sample(datosEstandarVida, length(datosEstandarVida), replace = FALSE)
-  muestra_Salud <- sample(datosSalud, length(datosSalud), replace = FALSE)
-  
-  coefs_EstandarVida_Salud[i] <- cor(muestra_EstandarVida, muestra_Salud, method = "spearman")
-}
-
-# Histograma de los coeficientes de correlacion simulados
-hist(coefs_EstandarVida_Salud, breaks = 30, col = "#623397", main = "Dist. Coef. Correlación Método Bootstrap", 
-     xlab = "Coeficiente de correlación Estándar de Vida - Salud", ylab = "Frecuencia")
-abline(h = 0, col = "black", lty = 1)
-
-#Resultados
-coefs <- data.frame(Salud_Educacion = coefs_Salud_Educacion, 
-                    Educacion_EstandarVida = coefs_Educacion_EstandarVida,
-                    EstandarVida_Salud = coefs_EstandarVida_Salud)
-
-
-#write_xlsx(coefs, path = "Distribucion_Correlacion_Bootstrap.xlsx")
 #-------------------------------------------------------------------------------
 
 
