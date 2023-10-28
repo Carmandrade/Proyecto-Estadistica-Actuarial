@@ -131,24 +131,27 @@ grafico4<- grid.arrange(plot_salud, plot_educacion, plot_estandar_vida, ncol = 3
 
 coefs <- read_excel("Distribucion_Correlacion_Bootstrap.xlsx")
 
-plot1 <- ggplot(as.data.frame(coefs), aes( x = Salud_Educacion)) +
-  geom_histogram(bins = 30, fill = "#efa7a7") +
-  labs(x = " Salud - Educación", y = "Frecuencia") + 
-  theme_minimal()+ theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
+g1<- ggplot(coefs, aes(x = col1)) +
+  geom_density( fill = "#efa7a7") +
+  labs(x = "Salud - Educación",
+       y = "Densidad") + theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))+
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(0.86, 0.98, by = 0.02), labels = seq(0.86, 0.98, by = 0.02))
 
-plot2 <- ggplot(as.data.frame(coefs), aes( x = Educacion_EstandarVida)) +
-  geom_histogram(bins = 30, fill = "#C2D7A7") +
-  labs(x = " Educación - Estándar Vida", y = "Frecuencia") + 
-  theme_minimal() +theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
+g2<- ggplot(coefs, aes(x = col2)) +
+  geom_density( fill = "#C2D7A7") +
+  labs(x = "Educación - Estándar de Vida",
+       y = "Densidad") + theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))+
+  theme_minimal() 
 
-plot3 <- ggplot(as.data.frame(coefs), aes( x = EstandarVida_Salud)) +
-  geom_histogram(bins = 30, fill = "#9cadce") +
-  labs( x = "Estándar Vida - Salud", y = "Frecuencia") + 
-  theme_minimal()+ theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))
+g3<- ggplot(coefs, aes(x = col3)) +
+  geom_density( fill = "#9cadce") +
+  labs( x = "Estándar de Vida - Salud",
+        y = "Densidad") + theme(plot.margin = unit(c(5, 5, 5, 5), "mm"))+
+  theme_minimal()  +
+  scale_x_continuous(breaks = seq(0.875, 0.950, by = 0.025), labels = seq(0.875, 0.950, by = 0.025))
 
-grafico5<- grid.arrange(plot1, plot2, plot3, ncol = 3, 
-                           top = textGrob("           Distribución del coeficiente de correlación",
-                                          gp=gpar(fontsize=12,font=2)))
+grafico5<-grid.arrange(g1, g2, g3, ncol =3)
 
 #ggsave(filename = "Grafico5.pdf", histogramas, h=2.5, w=5*1.8)
 
