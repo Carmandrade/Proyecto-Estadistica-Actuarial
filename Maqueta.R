@@ -168,6 +168,29 @@ g3<- ggplot(as.data.frame(b_Educacion_EstandarVida$t), aes(x = V1)) +
 print(g3)
 
 #-------------------------------------------------------------------------------
+#Resultados del Bootstrap:
 
+# Df de los intervalos de confianza
+ci <- data.frame(
+  Indicador = c("Salud-Educación", "Educación-EstándarVida", "EstándarVida-Salud"),
+  Tipo_intervalo = c("Normal", "Basico", "Percenti", "BCa"),
+  Lower = c(
+    ci_Salud_Educacion$normal[1], ci_Educacion_EstandarVida$normal[1], ci_EstandarVida_Salud$normal[1],
+    ci_Salud_Educacion$basic[1], ci_Educacion_EstandarVida$basic[1], ci_EstandarVida_Salud$basic[1],
+    ci_Salud_Educacion$percent[1], ci_Educacion_EstandarVida$percent[1], ci_EstandarVida_Salud$percent[1],
+    ci_Salud_Educacion$bca[1], ci_Educacion_EstandarVida$bca[1], ci_EstandarVida_Salud$bca[1]
+  ),
+  Upper = c(
+    ci_Salud_Educacion$normal[2], ci_Educacion_EstandarVida$normal[2], ci_EstandarVida_Salud$normal[2],
+    ci_Salud_Educacion$basic[2], ci_Educacion_EstandarVida$basic[2], ci_EstandarVida_Salud$basic[2],
+    ci_Salud_Educacion$percent[2], ci_Educacion_EstandarVida$percent[2], ci_EstandarVida_Salud$percent[2],
+    ci_Salud_Educacion$bca[2], ci_Educacion_EstandarVida$bca[2], ci_EstandarVida_Salud$bca[2]
+  )
+)
 
+ci_invertido <- pivot_wider(ci, names_from = Indicador, values_from = Lower:Upper)
+
+#write_xlsx(ci_invertido, path = "Intervalos Bootstrap.xlsx")
+
+#se obtienen intervalos de confianza muy cercanos a los obtenidos por el metodo de estabilizacion de la varianza.
 
