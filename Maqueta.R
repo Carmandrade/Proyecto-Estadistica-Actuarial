@@ -170,10 +170,13 @@ print(g3)
 #-------------------------------------------------------------------------------
 #Resultados del Bootstrap:
 
+ci_Salud_Educacion <- boot.ci(b_Salud_Educacion, type = c("norm", "basic", "perc", "bca"))
+ci_Educacion_EstandarVida <- boot.ci(b_Educacion_EstandarVida, type = c("norm", "basic", "perc", "bca"))
+ci_EstandarVida_Salud <- boot.ci(b_EstandarVida_Salud, type = c("norm", "basic", "perc", "bca"))
 # Df de los intervalos de confianza
 ci <- data.frame(
   Indicador = c("Salud-Educación", "Educación-EstándarVida", "EstándarVida-Salud"),
-  Tipo_intervalo = c("Normal", "Basico", "Percenti", "BCa"),
+  Tipo_intervalo = c("Normal", "Basico", "Percentil", "BCa"),
   Lower = c(
     ci_Salud_Educacion$normal[1], ci_Educacion_EstandarVida$normal[1], ci_EstandarVida_Salud$normal[1],
     ci_Salud_Educacion$basic[1], ci_Educacion_EstandarVida$basic[1], ci_EstandarVida_Salud$basic[1],
