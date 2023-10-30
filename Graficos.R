@@ -168,17 +168,17 @@ grafico6 <- ggplot() +
   scale_x_continuous(breaks = seq(0.86, 0.98, by = 0.02), labels = seq(0.86, 0.98, by = 0.02)) +
   scale_color_manual(
     name = "Comparación",
-    values = c("Salud - Educación" = "#efa7a7", "Educación - Estándar de Vida" = "#C2D7A7", "Estándar de Vida - Salud" = "#9cadce"),
-    labels = c("Salud - Educación", "Educación - Estándar de Vida", "Estándar de Vida - Salud")
+    values = c("Educación - Estándar de Vida" = "#C2D7A7", "Estándar de Vida - Salud" = "#9cadce","Salud - Educación" = "#efa7a7" ),
+    labels = c("Educación - Estándar de Vida", "Estándar de Vida - Salud", "Salud - Educación")
   ) +
   scale_fill_manual(
     name = "Comparación",
-    values = c("Salud - Educación" = "#efa7a7", "Educación - Estándar de Vida" = "#C2D7A7", "Estándar de Vida - Salud" = "#9cadce"),
-    labels = c("Salud - Educación", "Educación - Estándar de Vida", "Estándar de Vida - Salud")
+    values = c("Educación - Estándar de Vida" = "#C2D7A7", "Estándar de Vida - Salud" = "#9cadce","Salud - Educación" = "#efa7a7"),
+    labels = c("Educación - Estándar de Vida", "Estándar de Vida - Salud", "Salud - Educación")
   )
 
 grafico6
-#ggsave(filename = "Grafico6.pdf", grafico6, h=2.5, w=5*1.8)
+#ggsave(filename = "Grafico6.pdf", grafico6, h=4, w=5*1.8)
 
 
 
