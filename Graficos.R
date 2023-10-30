@@ -127,7 +127,7 @@ grafico4<- grid.arrange(plot_salud, plot_educacion, plot_estandar_vida, ncol = 3
 #ggsave(filename = "Grafico4.pdf", grafico4, h=2.5, w=5*1.8)
                    
 #-------------------------------------------------------------------------------
-#Grafico 5: Distribuciones Coef. Correlacion Metodo Bootstrap
+#Grafico No Utilizado: Distribuciones Coef. Correlacion Metodo Bootstrap
 
 coefs <- read_excel("Distribucion_Correlacion_Bootstrap.xlsx")
 
@@ -151,11 +151,11 @@ g3<- ggplot(coefs, aes(x = col3)) +
   theme_minimal()  +
   scale_x_continuous(breaks = seq(0.875, 0.950, by = 0.025), labels = seq(0.875, 0.950, by = 0.025))
 
-grafico5<-grid.arrange(g1, g2, g3, ncol =3)
+graficoN<-grid.arrange(g1, g2, g3, ncol =3)
 
-#ggsave(filename = "Grafico5.pdf", histogramas, h=2.5, w=5*1.8)
+#ggsave(filename = "GraficoN.pdf", graficoN, h=2.5, w=5*1.8)
 #-----------------------------------------------------------------------------
-# Grafico 6: Comparacion entre distribuciones simuladas
+# Grafico 5: Comparacion entre distribuciones simuladas
 
 grafico6 <- ggplot() +
   geom_density(data = coefs, aes(x = col1, color = "Salud - Educación", fill = "Salud - Educación"), alpha = 0.6) +
@@ -177,8 +177,8 @@ grafico6 <- ggplot() +
     labels = c("Educación - Estándar de Vida", "Estándar de Vida - Salud", "Salud - Educación")
   )
 
-grafico6
-#ggsave(filename = "Grafico6.pdf", grafico6, h=4, w=5*1.8)
+grafico5
+#ggsave(filename = "Grafico5.pdf", grafico5, h=4, w=5*1.8)
 
 
 
