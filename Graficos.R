@@ -17,6 +17,7 @@ setwd(script_directory)
 
 #-------------------------------------------------------------------------------
 #Grafico 1: Promedio global por de pobreza por subindicador
+#El objetivo del gráfico 1 es mostrar cuales indicadores afectan a un mayor porcentaje de población, lo que ayuda a responder al objetivo 1 que es "identificar los factores mas influyentes de cada región"
 
 indicadoresPobreza <- read_excel("Indicadores.xlsx")
 #Se calcula el promedio de los indicadores y se convierten en una nueva tabla.
@@ -44,6 +45,8 @@ print(grafico1)
 #ggsave("Grafico1.pdf", grafico1, bg="white")
 #-------------------------------------------------------------------------------
 #Grafico 2: Grafico de cajas valores del IPM por region 
+#El objetivo de este gráfico es mostrar la distribución del IPM por cuartiles y encontrar valores atípicos, ayudando a responder la pregunta central.
+                     
 tabla_limpia <- read_excel("Tabla Limpia.xlsx")
 
 # Se crea un vector con las traducciones de los nombres de cada region
@@ -75,6 +78,7 @@ print(grafico2)
 
 #-------------------------------------------------------------------------------
 #Grafico 3: Dispersion dos a dos de los 3 indicadores
+#El objetivo de este gráfico es encontrar indicios de correlación entre las 3 dimensiones, lo cual ayuda a responder la pregunta central.
 
 df <- read_excel("3 Dimensiones.xlsx")
 p1 <- ggplot(df, aes(x=Salud, y=Educación)) +
@@ -102,6 +106,8 @@ grafico3<-grid.arrange(p1, p2, p3, nrow = 1)
 
 #-------------------------------------------------------------------------------
 #Grafico 4: Distribuciones de los 3 indicadores principales
+#El objetivo de este gráfico es poder observar la distribución para cada variable, ayudando así  al tercer objetivo, que es estimar la distribución de la correlación entre los indicadores.
+                   
 plot_salud <- ggplot(df, aes( x = Salud)) +
   geom_histogram(bins = 20, fill = "#efa7a7") +
   labs(title = "Distribución Salud", x = "Salud", y = "Valor Porcentual") +
@@ -156,6 +162,7 @@ graficoN<-grid.arrange(g1, g2, g3, ncol =3)
 #ggsave(filename = "GraficoN.pdf", graficoN, h=2.5, w=5*1.8)
 #-----------------------------------------------------------------------------
 # Grafico 5: Comparacion entre distribuciones simuladas
+# Este gráfico contribuye a responder al tercer objetivo, que es estimar la distribución de la correlación entre los indicadores.
 
 grafico6 <- ggplot() +
   geom_density(data = coefs, aes(x = col1, color = "Salud - Educación", fill = "Salud - Educación"), alpha = 0.6) +
