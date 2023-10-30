@@ -21,7 +21,8 @@ datosSalud <- indicadoresPobreza$Salud
 datosEstandarVida <- indicadoresPobreza$`Estándares de Vida`
 datosEducacion <- indicadoresPobreza$Educación
 ################################################################################
-
+# Pruebas de Normalidad
+# Las siguientes 3 pruebas utlizan para comprobar la normalidad de los datos, contribuyendo a responder el tercer objetivo, que es estimar la distribución de la correlación entre los indicadores.
 
 # Pruebas Shapiro-Wilk
 
@@ -60,6 +61,7 @@ cat("Variable Salud: Estadistico =", kolmogorov_test_salud$statistic,", p-value 
 
 ##################################################################################
 # Correlacion de Spearman
+# El objetivo de este codigo es conseguir el coeficiente de correlación, contribuyendo a responder el segundo objetivo, que es cuantificar el coeficiente de correlación entre las diferentes dimensiones.
 cor_Salud_Educacion <- corr.test(datosSalud, datosEducacion, method = "spearman")
 cor_EstandarVida_Educacion <- corr.test(datosEstandarVida, datosEducacion, method = "spearman")
 cor_Salud_EstandarVida <- corr.test(datosSalud, datosEstandarVida, method = "spearman")
@@ -84,7 +86,7 @@ cat("Promedio correlación Salud: ", promSalud, "\n",
 
 ################################################################################
 #Intervalos de confianza con estabilización de la varianza
-
+#El siguiente codigo contribuye a responder la pregunta central. 
 '''
 Calcula el intercalo de confianza de una correlación.
 r:= Coeficiente de correlación.
@@ -107,6 +109,8 @@ intervalo_Salud_EstandarVida
 
 ################################################################################
 #Bootstrap
+#El siguiente método tienen como objetivo encontrar la distribución de las correlaciones entre los indicadores, respondiendo al objetivo 3.
+
 library("boot")
 set.seed(0)
 
